@@ -1,1 +1,3 @@
-# LuciferAiassistant
+# LuciferAiassistant 
+
+A VIRTUAL AI MODEL 
