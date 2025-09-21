@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Clicker+Script&family=Roboto+Slab:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 * {
@@ -41,7 +42,7 @@ h1 {
   display: block;
 }
 
-#btn {
+.btn {
   width: 30%;
   background: linear-gradient(to right, rgb(21, 145, 207), rgb(201, 41, 116));
   padding: 10px;
@@ -56,9 +57,11 @@ h1 {
   border: none;
   transition: all 0.5s;
   cursor: pointer;
+  text-decoration: none;
+  font-family: "Roboto", sans-serif;
 }
 
-#btn:hover {
+.btn:hover {
   box-shadow: 2px 2px 20px rgb(21, 145, 207), 2px 2px 20px rgb(201, 41, 116);
   letter-spacing: 2px;
 }
@@ -92,7 +95,7 @@ h1 {
     width: 160px;
     margin-top: 10px;
   }
-  #btn {
+  .btn {
     width: 70%;
     font-size: 1.1rem;
     margin: 10px auto;
@@ -126,7 +129,7 @@ h1 {
     margin: 15px auto 0 auto;
     display: block;
   }
-  #btn {
+  .btn {
     width: 85%;
     font-size: 1rem;
     padding: 12px;
@@ -163,7 +166,7 @@ h1 {
     margin: 10px auto 0 auto;
     display: block;
   }
-  #btn {
+  .btn {
     width: 95%;
     font-size: 1rem;
     padding: 12px;
@@ -175,6 +178,3 @@ h1 {
     text-align: center;
   }
 }
-
-
-
