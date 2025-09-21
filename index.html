@@ -13,17 +13,26 @@
   <img src="voice.gif" alt="voice" id="voice">
 
   
- <button id="btn">
-   say lucifer to start
-  </button>
-  <button id="btn"><a href="commands.html" id="commandsLink">View Commands</a></button>
-
-  
-  <div id="content"> Input Commands</div>
+<button id="startLucifer" class="btn">Press to Start</button>
 
 
+<a href="commands.html" id="commandsLink" class="btn">View Commands</a>
 
+  <div id="content">Input Commands</div>
 
   <script src="script.js"></script>
+
+  <script>
+    
+    document.addEventListener("DOMContentLoaded", function () {
+      const startButton = document.getElementById("startLucifer");
+      startButton.addEventListener("click", () => {
+        speak("Hello sir, Lucifer is now listening.").then(() => {
+          startListening();
+        });
+      });
+    });
+  </script>
 </body>
 </html>
+
