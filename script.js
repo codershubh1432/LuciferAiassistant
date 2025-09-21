@@ -1,7 +1,10 @@
+
 let content = document.querySelector("#content");
 let voice = document.querySelector("#voice");
 
 let isSpeaking = false;
+let isListening = false;
+let isRecognitionActive = false;
 
 function speak(text) {
     return new Promise((resolve) => {
@@ -13,12 +16,24 @@ function speak(text) {
         isSpeaking = true;
         console.log("🔊 Speaking:", text);
 
-        try { recognition.stop(); } catch (e) { }
+        try { 
+            recognition.stop(); 
+            console.log("🛑 Lucifer stopped listening while speaking"); 
+        } catch (e) { 
+        
+        }
 
         utterance.onend = () => {
             isSpeaking = false;
             console.log("✅ Finished speaking");
-            try { recognition.start(); } catch (e) { }
+            try { 
+                if (!isRecognitionActive && isListening) {
+                    recognition.start(); 
+                    console.log("🎤 Lucifer started listening after speaking");
+                }
+            } catch (e) { 
+                console.error("Error restarting recognition after speaking:", e);
+            }
             resolve();
         };
 
@@ -34,8 +49,6 @@ function wishMe() {
 }
 
 window.addEventListener("load", () => {
-    wishMe(); 
-    startListening();
 });
 
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -44,7 +57,14 @@ recognition.continuous = true;
 recognition.interimResults = false;
 
 function startListening() {
+    if (isListening) {
+        console.log("🛑 Already listening");
+        return;
+    }
+    isListening = true;
+
     recognition.onstart = () => {
+        isRecognitionActive = true;
         console.log("🎤 Listening started...");
     };
 
@@ -68,16 +88,33 @@ function startListening() {
     };
 
     recognition.onend = () => {
-        if (!isSpeaking) {
-            console.log("⚠️ Restarting listening...");
-            try { recognition.start(); } catch (e) {}
+        isRecognitionActive = false;
+        console.log("⚠️ Listening ended");
+        if (!isSpeaking && isListening) {
+            console.log("🔄 Restarting listening...");
+            try { 
+                if (!isRecognitionActive) recognition.start(); 
+            } catch (e) {
+                console.error("Error restarting recognition:", e);
+            }
         }
     };
 
-    try { recognition.start(); } catch (e) {}
+    try { 
+        if (!isRecognitionActive) recognition.start(); 
+    } catch (e) {
+        console.error("Error starting recognition:", e);
+    }
 }
 
-//function to convert word numbers to digits
+document.addEventListener("DOMContentLoaded", function () {
+    const startButton = document.getElementById("startLucifer");
+    startButton.addEventListener("click", () => {
+        speak("Hello sir, Lucifer is now listening.")
+            .then(() => startListening());
+    });
+});
+
 function wordsToNum(word) {
     const numberWords = {
         "one":1, "two":2, "three":3, "four":4, "five":5, "six":6,
@@ -111,6 +148,7 @@ async function takeCommand(message) {
     } else if (message.includes("stop listening") || message.includes("goodbye")) {
         await speak("Okay sir, I will stop listening now.");
         recognition.stop();
+        isListening = false; 
         return;
     } else if (message.includes("introduce yourself")) {
         await speak("Myself Lucifer, a virtual AI assistant built to improve English communication skills, created by Shubham sir.");
@@ -158,7 +196,8 @@ async function takeCommand(message) {
             await speak("Sorry sir, I could not calculate that.");
         }
         return;
-}else if (message.includes("table of two")) {
+    }
+   else if (message.includes("table of two")) {
     await speak("2 times 1 is 2, 2 times 2 is 4, 2 times 3 is 6, 2 times 4 is 8, 2 times 5 is 10, 2 times 6 is 12, 2 times 7 is 14, 2 times 8 is 16, 2 times 9 is 18, 2 times 10 is 20.");
     return;
 }
@@ -231,9 +270,7 @@ else if (message.includes("table of seventeen")) {
 else if (message.includes("table of eighteen")) {
     await speak("18 times 1 is 18, 18 times 2 is 36, 18 times 3 is 54, 18 times 4 is 72, 18 times 5 is 90, 18 times 6 is 108, 18 times 7 is 126, 18 times 8 is 144, 18 times 9 is 162, 18 times 10 is 180.");
     return;
-}
-
-else if (message.includes("table of nineteen")) {
+}else if (message.includes("table of nineteen")) {
     await speak("19 times 1 is 19, 19 times 2 is 38, 19 times 3 is 57, 19 times 4 is 76, 19 times 5 is 95, 19 times 6 is 114, 19 times 7 is 133, 19 times 8 is 152, 19 times 9 is 171, 19 times 10 is 190.");
     return;
 }else if (message.includes("table of twenty")) {
@@ -251,3 +288,5 @@ else if (message.includes("table of nineteen")) {
         return;
     }
 }
+
+    
