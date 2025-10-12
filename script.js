@@ -18,7 +18,7 @@ function speak(text) {
 
         try { 
             recognition.stop(); 
-            console.log("🛑 Galaxy stopped listening while speaking"); 
+            console.log("🛑 galaxy stopped listening while speaking"); 
         } catch (e) { 
         
         }
@@ -29,7 +29,7 @@ function speak(text) {
             try { 
                 if (!isRecognitionActive && isListening) {
                     recognition.start(); 
-                    console.log("🎤 Galaxy started listening after speaking");
+                    console.log("🎤 galaxy started listening after speaking");
                 }
             } catch (e) { 
                 console.error("Error restarting recognition after speaking:", e);
@@ -76,8 +76,8 @@ function startListening() {
 
         transcript = transcript.replace(/^(hey |ok |please |hi |hello )/, "");
 
-        if (transcript.includes("Galaxy")) {
-            let commandText = transcript.replace("Galaxy", "").trim();
+        if (transcript.includes("galaxy")) {
+            let commandText = transcript.replace("galaxy", "").trim();
             let commands = commandText.split(/\s*(?:and|then|,)\s*/);
             commands = commands.filter(cmd => cmd.trim() !== "");
 
@@ -108,9 +108,9 @@ function startListening() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    const startButton = document.getElementById("startGalaxy");
+    const startButton = document.getElementById("startgalaxy");
     startButton.addEventListener("click", () => {
-        speak("Hello sir, Galaxy is now listening.")
+        speak("Hello sir, galaxy is now listening.")
             .then(() => startListening());
     });
 });
@@ -289,6 +289,7 @@ else if (message.includes("table of eighteen")) {
 }
 }
     
+
 
 
 
