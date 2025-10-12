@@ -18,7 +18,7 @@ function speak(text) {
 
         try { 
             recognition.stop(); 
-            console.log("🛑 Lucifer stopped listening while speaking"); 
+            console.log("🛑 Galaxy stopped listening while speaking"); 
         } catch (e) { 
         
         }
@@ -29,7 +29,7 @@ function speak(text) {
             try { 
                 if (!isRecognitionActive && isListening) {
                     recognition.start(); 
-                    console.log("🎤 Lucifer started listening after speaking");
+                    console.log("🎤 Galaxy started listening after speaking");
                 }
             } catch (e) { 
                 console.error("Error restarting recognition after speaking:", e);
@@ -76,8 +76,8 @@ function startListening() {
 
         transcript = transcript.replace(/^(hey |ok |please |hi |hello )/, "");
 
-        if (transcript.includes("lucifer")) {
-            let commandText = transcript.replace("lucifer", "").trim();
+        if (transcript.includes("Galaxy")) {
+            let commandText = transcript.replace("Galaxy", "").trim();
             let commands = commandText.split(/\s*(?:and|then|,)\s*/);
             commands = commands.filter(cmd => cmd.trim() !== "");
 
@@ -108,9 +108,9 @@ function startListening() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    const startButton = document.getElementById("startLucifer");
+    const startButton = document.getElementById("startGalaxy");
     startButton.addEventListener("click", () => {
-        speak("Hello sir, Lucifer is now listening.")
+        speak("Hello sir, Galaxy is now listening.")
             .then(() => startListening());
     });
 });
@@ -151,7 +151,7 @@ async function takeCommand(message) {
         isListening = false; 
         return;
     } else if (message.includes("introduce yourself")) {
-        await speak("Myself Lucifer, a virtual AI assistant built to improve English communication skills, created by Shubham sir.");
+        await speak("Myself Galaxy, a virtual A I assistant built to improve English communication skills, created by a programer");
         return;
     } else if (message.includes("who is devil")) {
         await speak("In short, Lucifer is Morning Star, Venus in its original meaning. Later Christians identified him as the fallen angel, the devil, and the ruler of Hell.");
@@ -187,13 +187,13 @@ async function takeCommand(message) {
                         }
                         break;
                     default:
-                        await speak("Sorry sir, I could not calculate that.");
+                        await speak("Sorry sir, please check the input you provided.");
                 }
             } else {
                 await speak("Sorry sir, I could not understand the numbers or operation.");
             }
         } catch (err) {
-            await speak("Sorry sir, I could not calculate that.");
+            await speak("Sorry sir, tell the exaxt words.");
         }
         return;
     }
@@ -286,7 +286,10 @@ else if (message.includes("table of eighteen")) {
 }else if (message.includes("who is almighty")) {
         await speak("Lord Shiva – the destroyer and transformer. But destroyer here doesn’t mean evil. It means remover of ignorance, ego, and illusion, making way for new creation.");
         return;
-    }
+    }else if (message.includes("who can you do")) {
+        await speak("I can do calculations of any number and tell you exact time and date and tell you the tables like tabe of 2 to 20  i can also tell you animals name open apps for you like youtube and other");
+        return;
 }
-
+}
     
+
