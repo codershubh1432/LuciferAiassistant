@@ -290,6 +290,6 @@ else if (message.includes("table of eighteen")) {
         await speak("I can do calculations of any number and tell you exact time and date and tell you the tables like tabe of 2 to 20  i can also tell you animals name open apps for you like youtube and other");
         return;
 }
-}
     
+
 
