@@ -286,12 +286,10 @@ else if (message.includes("table of eighteen")) {
 }else if (message.includes("who is almighty")) {
         await speak("Lord Shiva – the destroyer and transformer. But destroyer here doesn’t mean evil. It means remover of ignorance, ego, and illusion, making way for new creation.");
         return;
-    }else if (message.includes("what can you do")) {
-        await speak("I can do calculations of any number and tell you exact time and date and tell you the tables like tabe of 2 to 20  i can also tell you animals name open apps for you like youtube and other");
-        return;
 }
 }
     
+
 
 
 
