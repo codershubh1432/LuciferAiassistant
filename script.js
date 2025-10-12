@@ -1,4 +1,3 @@
-
 let content = document.querySelector("#content");
 let voice = document.querySelector("#voice");
 
@@ -8,36 +7,58 @@ let isRecognitionActive = false;
 
 function speak(text) {
     return new Promise((resolve) => {
+        if (!text) return resolve();
+
         let utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 1;
         utterance.pitch = 1;
         utterance.volume = 1;
+        utterance.lang = "en-IN"; 
+
+        
+        let voices = speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            let voice = voices.find(v => v.lang === "en-IN") || voices[0];
+            utterance.voice = voice;
+        } else {
+            
+            window.speechSynthesis.onvoiceschanged = () => {
+                let newVoices = speechSynthesis.getVoices();
+                let voice = newVoices.find(v => v.lang === "en-IN") || newVoices[0];
+                utterance.voice = voice;
+                speechSynthesis.cancel();
+                speechSynthesis.speak(utterance);
+            };
+        }
 
         isSpeaking = true;
         console.log("🔊 Speaking:", text);
 
         try { 
             recognition.stop(); 
-            console.log("🛑 galaxy stopped listening while speaking"); 
-        } catch (e) { 
-        
-        }
+            console.log("🛑 Galaxy stopped listening while speaking"); 
+        } catch (e) {}
 
         utterance.onend = () => {
             isSpeaking = false;
             console.log("✅ Finished speaking");
-            try { 
+
+            setTimeout(() => {
                 if (!isRecognitionActive && isListening) {
-                    recognition.start(); 
-                    console.log("🎤 galaxy started listening after speaking");
+                    try { 
+                        recognition.start(); 
+                        console.log("🎤 Galaxy resumed listening");
+                    } catch (e) {
+                        console.error("Error restarting recognition:", e);
+                    }
                 }
-            } catch (e) { 
-                console.error("Error restarting recognition after speaking:", e);
-            }
+            }, 500);
             resolve();
         };
 
-        window.speechSynthesis.speak(utterance);
+        
+        speechSynthesis.cancel();
+        speechSynthesis.speak(utterance);
     });
 }
 
@@ -47,9 +68,6 @@ function wishMe() {
     else if (hours < 16) speak("Good Afternoon Sir");
     else speak("Good Evening Sir");
 }
-
-window.addEventListener("load", () => {
-});
 
 let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = new SpeechRecognition();
@@ -78,9 +96,7 @@ function startListening() {
 
         if (transcript.includes("galaxy")) {
             let commandText = transcript.replace("galaxy", "").trim();
-            let commands = commandText.split(/\s*(?:and|then|,)\s*/);
-            commands = commands.filter(cmd => cmd.trim() !== "");
-
+            let commands = commandText.split(/\s*(?:and|then|,)\s*/).filter(cmd => cmd.trim() !== "");
             for (let cmd of commands) {
                 await takeCommand(cmd.trim());
             }
@@ -93,7 +109,7 @@ function startListening() {
         if (!isSpeaking && isListening) {
             console.log("🔄 Restarting listening...");
             try { 
-                if (!isRecognitionActive) recognition.start(); 
+                recognition.start(); 
             } catch (e) {
                 console.error("Error restarting recognition:", e);
             }
@@ -101,7 +117,7 @@ function startListening() {
     };
 
     try { 
-        if (!isRecognitionActive) recognition.start(); 
+        recognition.start(); 
     } catch (e) {
         console.error("Error starting recognition:", e);
     }
@@ -110,25 +126,17 @@ function startListening() {
 document.addEventListener("DOMContentLoaded", function () {
     const startButton = document.getElementById("startgalaxy");
     startButton.addEventListener("click", () => {
-        speak("Hello sir, galaxy is now listening.")
+        speak("Hello sir, Galaxy is now listening.")
             .then(() => startListening());
     });
 });
 
-function wordsToNum(word) {
-    const numberWords = {
-        "one":1, "two":2, "three":3, "four":4, "five":5, "six":6,
-        "seven":7, "eight":8, "nine":9, "ten":10, "eleven":11, "twelve":12,
-        "thirteen":13, "fourteen":14, "fifteen":15, "sixteen":16,
-        "seventeen":17, "eighteen":18, "nineteen":19, "twenty":20
-    };
-    word = word.trim();
-    return numberWords[word] || null;
-}
-
+// commands //
 async function takeCommand(message) {
     message = message.trim();
     if (!message) return;
+
+    console.log("🧠 Received command:", message);
 
     if (message.includes("hello") || message.includes("hey")) {
         await speak("Hello sir, what can I help you with?");
@@ -151,10 +159,10 @@ async function takeCommand(message) {
         isListening = false; 
         return;
     } else if (message.includes("introduce yourself")) {
-        await speak("Myself Galaxy, a virtual A I assistant built to improve English communication skills, created by a programer");
+        await speak("Myself Galaxy, a virtual A I assistant built to improve English communication skills, created by a programmer.");
         return;
     } else if (message.includes("who is devil")) {
-        await speak("In short, Lucifer is Morning Star, Venus in its original meaning. Later Christians identified him as the fallen angel, the devil, and the ruler of Hell.");
+        await speak("Lucifer, also called the Morning Star, originally meant Venus, later known as the fallen angel and ruler of Hell.");
         return;
     } else if (message.toLowerCase().includes("what is")) {
         try {
@@ -167,36 +175,23 @@ async function takeCommand(message) {
                 let result;
 
                 switch(operator) {
-                    case '+':
-                        result = num1 + num2;
-                        await speak(`${num1} plus ${num2} is ${result}`);
-                        break;
-                    case '-':
-                        result = num1 - num2;
-                        await speak(`${num1} minus ${num2} is ${result}`);
-                        break;
-                    case '*':
-                        result = num1 * num2;
-                        await speak(`${num1} multiplied by ${num2} is ${result}`);
-                        break;
+                    case '+': result = num1 + num2; await speak(`${num1} plus ${num2} is ${result}`); break;
+                    case '-': result = num1 - num2; await speak(`${num1} minus ${num2} is ${result}`); break;
+                    case '*': result = num1 * num2; await speak(`${num1} multiplied by ${num2} is ${result}`); break;
                     case '/':
                         if (num2 === 0) await speak("Sorry sir, division by zero is not allowed.");
-                        else {
-                            result = num1 / num2;
-                            await speak(`${num1} divided by ${num2} is ${result}`);
-                        }
+                        else { result = num1 / num2; await speak(`${num1} divided by ${num2} is ${result}`); }
                         break;
-                    default:
-                        await speak("Sorry sir, please check the input you provided.");
+                    default: await speak("Sorry sir, please check the input you provided.");
                 }
             } else {
                 await speak("Sorry sir, I could not understand the numbers or operation.");
             }
         } catch (err) {
-            await speak("Sorry sir, tell the exaxt words.");
+            await speak("Sorry sir, please say the exact words.");
         }
         return;
-    }
+     }
    else if (message.includes("table of two")) {
     await speak("2 times 1 is 2, 2 times 2 is 4, 2 times 3 is 6, 2 times 4 is 8, 2 times 5 is 10, 2 times 6 is 12, 2 times 7 is 14, 2 times 8 is 16, 2 times 9 is 18, 2 times 10 is 20.");
     return;
@@ -246,7 +241,6 @@ else if (message.includes("table of thirteen")) {
     await speak("13 times 1 is 13, 13 times 2 is 26, 13 times 3 is 39, 13 times 4 is 52, 13 times 5 is 65, 13 times 6 is 78, 13 times 7 is 91, 13 times 8 is 104, 13 times 9 is 117, 13 times 10 is 130.");
     return;
 }
-
 else if (message.includes("table of fourteen")) {
     await speak("14 times 1 is 14, 14 times 2 is 28, 14 times 3 is 42, 14 times 4 is 56, 14 times 5 is 70, 14 times 6 is 84, 14 times 7 is 98, 14 times 8 is 112, 14 times 9 is 126, 14 times 10 is 140.");
     return;
@@ -261,7 +255,6 @@ else if (message.includes("table of sixteen")) {
     await speak("16 times 1 is 16, 16 times 2 is 32, 16 times 3 is 48, 16 times 4 is 64, 16 times 5 is 80, 16 times 6 is 96, 16 times 7 is 112, 16 times 8 is 128, 16 times 9 is 144, 16 times 10 is 160.");
     return;
 }
-
 else if (message.includes("table of seventeen")) {
     await speak("17 times 1 is 17, 17 times 2 is 34, 17 times 3 is 51, 17 times 4 is 68, 17 times 5 is 85, 17 times 6 is 102, 17 times 7 is 119, 17 times 8 is 136, 17 times 9 is 153, 17 times 10 is 170.");
     return;
@@ -276,7 +269,7 @@ else if (message.includes("table of eighteen")) {
 }else if (message.includes("table of twenty")) {
     await speak("20 times 1 is 20, 20 times 2 is 40, 20 times 3 is 60, 20 times 4 is 80, 20 times 5 is 100, 20 times 6 is 120, 20 times 7 is 140, 20 times 8 is 160, 20 times 9 is 180, 20 times 10 is 200.");
     return;
-}else if (
+    }else if (
     message.includes("animal names") ||
     message.includes("animal name") ||
     message.includes("four legs animal")
@@ -286,11 +279,8 @@ else if (message.includes("table of eighteen")) {
 }else if (message.includes("who is almighty")) {
         await speak("Lord Shiva – the destroyer and transformer. But destroyer here doesn’t mean evil. It means remover of ignorance, ego, and illusion, making way for new creation.");
         return;
+}else if (message.includes("what can you do")) {
+        await speak("i can do calculations of any mathematical numbers and tell you exact time and date and tebles up to 2 to 20 and tell you animals name with spelling.");
+        return;
 }
 }
-    
-
-
-
-
-
